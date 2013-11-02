@@ -2,7 +2,8 @@
 
 export DROPBOX_ID=$1
 export SCREENSHOT_PATH=~/Dropbox/Public/screenshots
-export INSTALL=~/code/dropbox-screenshots
+export INSTALL="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo $INSTALL
 
 # ensure screenshots are stored in the right folder
 mkdir -p $SCREENSHOT_PATH
@@ -37,5 +38,3 @@ killall SystemUIServer
 # Misc commands:
 #  launchctl list
 #  launchctl getenv PATH
-#  ln -s ~/code/copy-public-url-v2/com.dergachev.copy-public-url.plist ~/Library/LaunchAgents/com.dergachev.copy-public-url.plist
-
