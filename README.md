@@ -1,7 +1,7 @@
 # dropbox-screenshots
 
-OS X daemon and ruby script to have OSX screenshots automatically
-go to Dropbox, and their public URL be copied to clipboard.
+OS X LaunchAgent and ruby script to have OSX screenshots automatically
+upload to Dropbox, with their public URL be copied to clipboard.
 
 ![](https://dl.dropbox.com/u/29440342/screenshots/YXKORVYG-2013.11.01-21-53-02.png)
 
@@ -22,7 +22,7 @@ First, get your Dropbox user ID, as follows:
 
 * In Finder, right-click on any file under `~/Dropbox/Public`
 * choose "Dropbox > Copy Public Link". 
-* You'll have a link in your clipboard like http://dl.dropbox.com/u/12345678/mycoolpic.jpg
+* You'll have a link in your clipboard like `http://dl.dropbox.com/u/12345678/mycoolpic.jpg`
 * 12345678 is the user ID. 
 
 <img src="https://dl.dropbox.com/u/29440342/screenshots/YCOJCG-Screen_Shot_2012.12.8-12.40.53.png" width="50%">
@@ -37,7 +37,7 @@ which terminal-notifier || sudo gem install terminal-notifier
 git clone https://github.com/dergachev/dropbox-screenshots.git ~/code/dropbox-screenshots
 cd ~/code/dropbox-screenshots
 
-# run the installer
+# run the installer (it will make your screenshots get saved to ~/Dropbox/Public/screenshots)
 bash install.sh 12345678     # replace 12345678 with your dropbox user ID
 ```
 
@@ -46,6 +46,7 @@ bash install.sh 12345678     # replace 12345678 with your dropbox user ID
 * Consider making a custom icon for notifications.
 * Investigate error in /var/log/system.log: `Throttling respawn: Will start in 6 seconds`. 
   [Related thread](http://apple.stackexchange.com/questions/63482/can-launchd-run-programs-more-frequently-than-every-10-seconds)
+* Consider making a gem for ease of install.
 
 ## Dev notes
 
@@ -54,3 +55,9 @@ bash install.sh 12345678     # replace 12345678 with your dropbox user ID
 * https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man5/launchd.plist.5.html
 * https://github.com/adamyonk/dotfiles/blob/484c3498671c5f5a62a8bb4d287bc71adb70ba6a/bin/snapr
 * https://github.com/adamyonk/dotfiles/blob/484c3498671c5f5a62a8bb4d287bc71adb70ba6a/system/launchagents/com.adamyonk.snapr.plist
+
+PlistBuddy
+
+* http://macops.ca/java-7-how-not-to-use-launchd-for-your-app/
+* http://www.mactech.com/articles/mactech/Vol.25/25.09/2509MacintheShell/index.html
+* https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man5/launchd.plist.5.html
