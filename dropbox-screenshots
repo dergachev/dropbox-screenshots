@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+require 'time'
+
+unless ARGV.first
+  $stderr.puts "Usage: dropbox-screenshots <DROPBOX_ID>"
+  exit 1
+end
+
+dropbox_user = ARGV.first
+screenshots_subfolder = "screenshots"
+screenshots_path = File.expand_path("~/Dropbox/Public/#{screenshots_subfolder}")
+file_path = Dir["#{screenshots_path}/*"].sort_by{ |f| File.mtime(f) }.last
+orig_filename = File.basename(file_path)
+
+# downscale by 50% screenshots if on retina display
+#   see http://blog.lanceli.com/2012/08/downscale-screenshot-at-hight-resolution-on-retina-mackbook-pro.html
+#   see https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/sips.1.html
+#   see http://superuser.com/questions/447295/how-can-i-get-the-current-screen-resolution-from-the-command-line-on-os-x
+# Resolution: 2880 x 1800
+screen_width = `system_profiler SPDisplaysDataType | grep Resolution | awk '{print $2}'`
+if screen_width && screen_width.to_i > 2000
+  image_width = `sips -g pixelWidth "#{file_path}" | cut -s -d ':' -f 2 | cut -c 2-`
+  if image_width && image_width.to_i > 500   # ignore tiny images
+    $stderr.puts "Resizing #{file_path} to new width #{image_width.to_i/2}"
+    `sips --resampleWidth "#{image_width.to_i / 2}" "#{file_path}" --out "#{file_path}"`
+  end
+end
+
+# Screen Shot 2013-11-01 at 3.10.13 PM.png
+time = orig_filename.scan(/Screen Shot (.*) at (.*).png/).first
+
+# in case latest file has already been renamed
+unless time
+  $stderr.puts "Latest file is not an unprocessed screenshot (#{file_path}), exiting."
+  exit 0
+end
+
+time = time.join(" ").gsub(/\./,':')
+time = Time.parse(time).strftime("%Y.%m.%d-%H-%M-%S")
+
+# 8 random uppercase letters; for security
+random_letters = (0...8).map { (65 + rand(26)).chr }.join
+
+# ABSKKJFD-2013.11.01-15.10.13.png
+new_filename = "#{random_letters}-#{time}.png"
+new_file_path = File.join(screenshots_path, new_filename)
+File.rename(file_path, new_file_path)
+
+
+url = "https://dl.dropbox.com/u/#{dropbox_user}/#{screenshots_subfolder}/#{new_filename}"
+`echo "#{url}" | pbcopy`
+puts `terminal-notifier -title Copied -message "#{url}" -execute "open #{new_file_path}"`
