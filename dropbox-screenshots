@@ -21,7 +21,8 @@ orig_filename = File.basename(file_path)
 screen_width = `system_profiler SPDisplaysDataType | grep Resolution | awk '{print $2}'`
 if screen_width && screen_width.to_i > 2000
   image_width = `sips -g pixelWidth "#{file_path}" | cut -s -d ':' -f 2 | cut -c 2-`
-  if image_width && image_width.to_i > 500   # ignore tiny images
+  # only resize huge images
+  if image_width && image_width.to_i > 20000
     $stderr.puts "Resizing #{file_path} to new width #{image_width.to_i/2}"
     `sips --resampleWidth "#{image_width.to_i / 2}" "#{file_path}" --out "#{file_path}"`
   end
