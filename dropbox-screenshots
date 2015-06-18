@@ -50,5 +50,5 @@ File.rename(file_path, new_file_path)
 
 
 url = "https://dl.dropbox.com/u/#{dropbox_user}/#{screenshots_subfolder}/#{new_filename}"
-`echo "#{url}" | pbcopy`
+`/bin/echo -n "#{url}" | pbcopy`
 puts `terminal-notifier -title Copied -message "#{url}" -execute "open #{new_file_path}"`
